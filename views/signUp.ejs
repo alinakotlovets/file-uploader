@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+</head>
+<body>
+<form action="/sign-up" method="post">
+    <label for="username">Username</label>
+    <input type="text" id="username" value="<%= username %>" name="username">
+    <label for="password">Password:</label>
+    <input type="text" id="password" value="<%= password %>" name="password">
+    <label for="confirmPassword">Confirm password:</label>
+    <input type="text" id="confirmPassword" value="<%= confirmPassword %>" name="confirmPassword">
+    <%- include('components/errors.ejs', {errors: errors})%>
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>
