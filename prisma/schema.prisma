@@ -12,4 +12,27 @@ model User {
   username  String   @unique
   password  String
   createdAt DateTime @default(now())
+  files     Files[]
+  folders   Folder[]
+}
+
+model Files {
+  id       Int      @id @default(autoincrement())
+  path     String
+  size     Int
+  fileName String
+  addedAt  DateTime @default(now())
+  userId   Int
+  folderId Int
+  folder   Folder   @relation(fields: [folderId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+}
+
+model Folder {
+  id         Int      @id @default(autoincrement())
+  folderName String
+  userId     Int
+  addedAt    DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  files      Files[]
 }

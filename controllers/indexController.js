@@ -1,7 +1,9 @@
+import {getUserFolders} from "../lib/queries.js";
 
 
-export function getIndex(req, res){
-    res.render("index");
+export async function getIndex(req, res){
+    const folders = await getUserFolders(req.user.id);
+    res.render("index", {folders: folders})
 }
 
 export function logOut(req, res) {

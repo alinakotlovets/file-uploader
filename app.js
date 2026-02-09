@@ -7,6 +7,8 @@ import setUserLocals from "./middleware/setUserLocals.js";
 import indexRouter from "./routes/indexRouter.js";
 import signUpRouter from "./routes/signUpRouter.js";
 import signInRouter from "./routes/signInRouter.js";
+import fileUploadRouter from "./routes/fileUploadRouter.js";
+import folderRouter from "./routes/folderRouter.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -27,8 +29,10 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static("public"));
 
+app.use("/folder", folderRouter);
 app.use("/sign-up", signUpRouter);
-app.use("/sign-in", signInRouter)
+app.use("/sign-in", signInRouter);
+app.use("/upload-file", fileUploadRouter);
 app.use("/", indexRouter);
 
 

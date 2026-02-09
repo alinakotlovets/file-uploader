@@ -3,10 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/css/style.css">
     <title>File Uploader</title>
 </head>
 <body>
 <a href="/log-out">Log out</a>
 <h1>Hello <%=user.username%></h1>
+<button id="add-folder-btn">Add Folder</button>
+<% if(folders.length > 0 ){ %>
+    <ul>
+        <% folders.forEach((folder)=>{ %>
+            <li><%= folder.folderName %></li>
+        <% }) %>
+    </ul>
+<% } %>
+
+<%- include("components/folderForm.ejs")%>
 </body>
 </html>
