@@ -7,7 +7,7 @@ import setUserLocals from "./middleware/setUserLocals.js";
 import indexRouter from "./routes/indexRouter.js";
 import signUpRouter from "./routes/signUpRouter.js";
 import signInRouter from "./routes/signInRouter.js";
-import fileUploadRouter from "./routes/fileUploadRouter.js";
+import fileRouter from "./routes/fileRouter.js";
 import folderRouter from "./routes/folderRouter.js";
 
 
@@ -32,7 +32,7 @@ app.use(express.static("public"));
 app.use("/folder", folderRouter);
 app.use("/sign-up", signUpRouter);
 app.use("/sign-in", signInRouter);
-app.use("/upload-file", fileUploadRouter);
+app.use("/files", fileRouter);
 app.use("/", indexRouter);
 
 

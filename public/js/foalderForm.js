@@ -7,9 +7,42 @@ const pageContentTitle = document.createElement("h2");
 let activeFolder = null;
 
 
+function chooseActiveFolder(folderName, folderId, files = []){
+    const creatFileBox = document.createElement("div");
+    const createFileText = document.createElement("h3");
+    const fileList = document.createElement("ul");
+    createFileText.innerText = `Add file to ${folderName} folder`
+    const link = document.createElement("a");
+    creatFileBox.append(createFileText, link);
+
+    link.innerHTML = "+";
+    link.href = `/files/${folderId}`;
 
 
-folderList.addEventListener("click", (e)=>{
+    pageContent.innerHTML = "";
+    pageContentTitle.innerText = `You now in ${folderName}`
+    pageContent.append(creatFileBox, pageContentTitle);
+    if(files.length === 0){
+        pageContentTitle.innerText = `Folder ${folderName} empty. Add files to see them.`
+    } else {
+        files.forEach((file)=>{
+            const fileListItem = document.createElement("li");
+            const fileTitle = document.createElement("h3");
+            fileTitle.innerText = `${file.fileName}`;
+            fileListItem.append(fileTitle);
+            fileList.append(fileListItem);
+        })
+        pageContent.append(fileList);
+    }
+}
+
+function noActiveFolder(){
+    activeFolder = null;
+    pageContent.innerHTML = "";
+    pageContentTitle.innerText = 'Create or choose folder to see content in them';
+    pageContent.appendChild(pageContentTitle);
+}
+folderList.addEventListener("click", async (e)=>{
     const folderListItem = e.target.closest(".folder-list-item");
     if(!folderListItem) return;
     e.preventDefault();
@@ -18,16 +51,18 @@ folderList.addEventListener("click", (e)=>{
         folderName: folderListItem.querySelector(".folder-list-item-title").innerText,
         folderId: folderId
     }
-    pageContent.innerHTML = "";
-    pageContentTitle.innerText = `You now in ${activeFolder.folderName}`
-    pageContent.appendChild(pageContentTitle);
+
+    const response = await fetch(`/files/${folderId}/files`, {
+        method: "GET",
+        headers: {"Content-Type": "application/json"},
+    })
+
+    const data = await response.json();
+    if(data.files){
+        chooseActiveFolder(activeFolder.folderName, activeFolder.folderId, data.files);
+    }
 })
 
-if(activeFolder === null){
-    pageContent.innerHTML = "";
-    pageContentTitle.innerText = 'Create or choose folder to see content in them';
-    pageContent.appendChild(pageContentTitle);
-}
 addFolderBtn.addEventListener("click", ()=>{
     folderForm.style.display = "flex";
     folderForm.action = "/folder";
@@ -52,10 +87,7 @@ folderList.addEventListener("click", async (e)=>{
 
     if(response.ok){
         if(activeFolder.folderId === folderId){
-            activeFolder = null;
-            pageContent.innerHTML = "";
-            pageContentTitle.innerText = 'Create or choose folder to see content in them';
-            pageContent.appendChild(pageContentTitle);
+           noActiveFolder();
         }
         deleteBtn.closest(".folder-list-item").remove();
     }
@@ -109,9 +141,7 @@ folderForm.addEventListener("submit", async (e)=>{
         data = await response.json();
         if(Number(activeFolder.folderId) === data.folder.id){
             activeFolder.folderName = data.folder.folderName;
-            pageContent.innerHTML = "";
-            pageContentTitle.innerText = `You now in ${data.folder.folderName}`;
-            pageContent.appendChild(pageContentTitle);
+            chooseActiveFolder(data.folder.folderName, data.folder.id);
         }
         const liTitle = folderList.querySelector(`.folder-list-item-title[data-folder-id="${data.folder.id}"]`);
         if(liTitle) liTitle.innerText = data.folder.folderName;
@@ -122,3 +152,4 @@ folderForm.addEventListener("submit", async (e)=>{
 
 
 
+noActiveFolder();
