@@ -9,15 +9,21 @@
 <body>
 <a href="/log-out">Log out</a>
 <h1>Hello <%=user.username%></h1>
+<div>
 <button id="add-folder-btn">Add Folder</button>
 <% if(folders.length > 0 ){ %>
-    <ul>
+    <ul class="folder-list">
         <% folders.forEach((folder)=>{ %>
-            <li><%= folder.folderName %></li>
+            <li class="folder-list-item">
+                <h3 class="folder-list-item-title" data-folder-id="<%= folder.id %>"><%= folder.folderName %></h3>
+                <button class="delete-folder-btn" data-folder-id="<%= folder.id %>">Delete</button>
+                <button class="edit-folder-btn"  data-folder-id="<%= folder.id %>"> Edit </button>
+            </li>
         <% }) %>
     </ul>
 <% } %>
-
+</div>
+<div id="page-content"></div>
 <%- include("components/folderForm.ejs")%>
 </body>
 </html>
