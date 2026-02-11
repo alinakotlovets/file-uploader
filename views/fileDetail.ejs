@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>File Detail</title>
+</head>
+<body>
+<h2>Name: <%= file.fileName %></h2>
+<h2>Size: <%= file.size %></h2>
+<h2>Added at: <%= file.formattedDate%></h2>
+<h2>Added by: <%= file.user.username %></h2>
+<h2>Folder name: <%= file.folder.folderName %></h2>
+</body>
+</html>

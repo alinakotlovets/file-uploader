@@ -16,7 +16,7 @@ function chooseActiveFolder(folderName, folderId, files = []){
     creatFileBox.append(createFileText, link);
 
     link.innerHTML = "+";
-    link.href = `/files/${folderId}`;
+    link.href = `/files/upload-file/${folderId}`;
 
 
     pageContent.innerHTML = "";
@@ -27,9 +27,13 @@ function chooseActiveFolder(folderName, folderId, files = []){
     } else {
         files.forEach((file)=>{
             const fileListItem = document.createElement("li");
-            const fileTitle = document.createElement("h3");
+            const fileTitle = document.createElement("a");
+            fileTitle.href = `http://localhost:3000/uploads/${file.path}`
+            const detailLink = document.createElement("a");
+            detailLink.href = `/files/${file.id}`;
+            detailLink.innerText = "Detail";
             fileTitle.innerText = `${file.fileName}`;
-            fileListItem.append(fileTitle);
+            fileListItem.append(fileTitle, detailLink);
             fileList.append(fileListItem);
         })
         pageContent.append(fileList);

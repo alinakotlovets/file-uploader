@@ -5,7 +5,7 @@
     <title>File Upload</title>
 </head>
 <body>
-<form action="/files/<%= folderId %>" method="post" enctype="multipart/form-data">
+<form action="/files/upload-file/<%= folderId %>" method="post" enctype="multipart/form-data">
     <label for="file">File:</label>
     <input type="file" id="file" name="file">
     <%- include('components/errors.ejs', {errors: errors})%>
