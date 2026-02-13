@@ -11,17 +11,18 @@
 <h1>Hello <%=user.username%></h1>
 <div>
 <button id="add-folder-btn">Add Folder</button>
-<% if(folders.length > 0 ){ %>
     <ul class="folder-list">
+        <% if(folders.length > 0 ){ %>
         <% folders.forEach((folder)=>{ %>
             <li class="folder-list-item">
                 <h3 class="folder-list-item-title" data-folder-id="<%= folder.id %>"><%= folder.folderName %></h3>
                 <button class="delete-folder-btn" data-folder-id="<%= folder.id %>">Delete</button>
-                <button class="edit-folder-btn"  data-folder-id="<%= folder.id %>"> Edit </button>
+                <button class="edit-folder-btn" data-folder-id="<%= folder.id %>"> Edit </button>
+                <button class="share-folder-btn" data-folder-id="<%= folder.id %>">Share</button>
             </li>
         <% }) %>
-    </ul>
 <% } %>
+    </ul>
 </div>
 <div id="page-content"></div>
 <%- include("components/folderForm.ejs")%>

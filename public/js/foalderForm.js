@@ -4,6 +4,8 @@ const closeFormBtn = document.getElementById("cansel-btn");
 const folderList = document.querySelector(".folder-list");
 const pageContent = document.getElementById('page-content');
 const pageContentTitle = document.createElement("h2");
+const errorText = document.createElement("p");
+folderForm.append(errorText);
 let activeFolder = null;
 
 
@@ -28,7 +30,7 @@ function chooseActiveFolder(folderName, folderId, files = []){
         files.forEach((file)=>{
             const fileListItem = document.createElement("li");
             const fileTitle = document.createElement("a");
-            fileTitle.href = `http://localhost:3000/uploads/${file.path}`
+            fileTitle.href = `/files/${file.id}/download`
             const detailLink = document.createElement("a");
             detailLink.href = `/files/${file.id}`;
             detailLink.innerText = "Detail";
@@ -46,26 +48,90 @@ function noActiveFolder(){
     pageContentTitle.innerText = 'Create or choose folder to see content in them';
     pageContent.appendChild(pageContentTitle);
 }
-folderList.addEventListener("click", async (e)=>{
-    const folderListItem = e.target.closest(".folder-list-item");
-    if(!folderListItem) return;
-    e.preventDefault();
-    const folderId =  folderListItem.querySelector(".folder-list-item-title").dataset.folderId;
-    activeFolder = {
-        folderName: folderListItem.querySelector(".folder-list-item-title").innerText,
-        folderId: folderId
-    }
 
-    const response = await fetch(`/files/${folderId}/files`, {
-        method: "GET",
-        headers: {"Content-Type": "application/json"},
+function copyLink(url) {
+    navigator.clipboard.writeText(url).then(() => {
+        alert("Link copied");
+    }).catch(err => {
+        console.error('Failed to copy link: ', err);
+    });
+}
+
+if(folderList){
+    folderList.addEventListener("click", async (e)=>{
+        if(e.target.closest("button")) return;
+        const folderListItem = e.target.closest(".folder-list-item");
+        if(!folderListItem) return;
+        e.preventDefault();
+        const folderId =  folderListItem.querySelector(".folder-list-item-title").dataset.folderId;
+        activeFolder = {
+            folderName: folderListItem.querySelector(".folder-list-item-title").innerText,
+            folderId: folderId
+        }
+
+        const response = await fetch(`/files/${folderId}/files`, {
+            method: "GET",
+            headers: {"Content-Type": "application/json"},
+        })
+
+        const data = await response.json();
+        if(data.files){
+            chooseActiveFolder(activeFolder.folderName, activeFolder.folderId, data.files);
+        }
     })
 
-    const data = await response.json();
-    if(data.files){
-        chooseActiveFolder(activeFolder.folderName, activeFolder.folderId, data.files);
-    }
-})
+    folderList.addEventListener("click", async (e)=>{
+        const deleteBtn = e.target.closest(".delete-folder-btn");
+        if(!deleteBtn) return;
+        e.preventDefault();
+        const folderId = deleteBtn.dataset.folderId;
+        const response = await fetch(`/folder/${folderId}`, {
+            method: "DELETE",
+            headers: {"Content-Type": "application/json"},
+        })
+        const data = await response.json();
+
+        if(response.ok){
+            if(activeFolder.folderId === folderId){
+                noActiveFolder();
+            }
+            deleteBtn.closest(".folder-list-item").remove();
+        }
+    })
+
+
+    folderList.addEventListener("click", (e)=>{
+        const editBtn = e.target.closest(".edit-folder-btn");
+        if(!editBtn) return;
+        e.preventDefault();
+        const folderId = editBtn.dataset.folderId;
+        const folderListItem = e.target.closest(".folder-list-item");
+        folderForm.style.display = "flex";
+        folderForm.action = `/folder/${folderId}`;
+        folderForm.method = "PUT"
+        document.getElementById("folderName").value = folderListItem.querySelector(".folder-list-item-title").innerText;
+    })
+
+    folderList.addEventListener("click", async (e)=>{
+        const shareBtn = e.target.closest(".share-folder-btn");
+        if(!shareBtn) return;
+        e.preventDefault();
+        const folderId = shareBtn.dataset.folderId;
+
+        const response = await fetch(`/folder/share`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                folderId: folderId
+            })
+        })
+
+        const data = await response.json();
+        if(data.token){
+            copyLink(`${window.location.origin}/folder/share/${data.token}`)
+        }
+    })
+}
 
 addFolderBtn.addEventListener("click", ()=>{
     folderForm.style.display = "flex";
@@ -76,39 +142,10 @@ addFolderBtn.addEventListener("click", ()=>{
 closeFormBtn.addEventListener("click",()=>{
     folderForm.style.display = "none";
     folderForm.action = "";
+    errorText.innerText = "";
     folderForm.querySelector("#folderName").value = "";
 })
-folderList.addEventListener("click", async (e)=>{
-    const deleteBtn = e.target.closest(".delete-folder-btn");
-    if(!deleteBtn) return;
-    e.preventDefault();
-    const folderId = deleteBtn.dataset.folderId;
-    const response = await fetch(`/folder/${folderId}`, {
-        method: "DELETE",
-        headers: {"Content-Type": "application/json"},
-    })
-    const data = await response.json();
 
-    if(response.ok){
-        if(activeFolder.folderId === folderId){
-           noActiveFolder();
-        }
-        deleteBtn.closest(".folder-list-item").remove();
-    }
-})
-
-
-folderList.addEventListener("click", (e)=>{
-    const editBtn = e.target.closest(".edit-folder-btn");
-    if(!editBtn) return;
-    e.preventDefault();
-    const folderId = editBtn.dataset.folderId;
-    const folderListItem = e.target.closest(".folder-list-item");
-    folderForm.style.display = "flex";
-    folderForm.action = `/folder/${folderId}`;
-    folderForm.method = "PUT"
-    document.getElementById("folderName").value = folderListItem.querySelector(".folder-list-item-title").innerText;
-})
 
 
 folderForm.addEventListener("submit", async (e)=>{
@@ -124,16 +161,24 @@ folderForm.addEventListener("submit", async (e)=>{
             })
         })
         data = await response.json();
-        const newLi = document.createElement("li");
-        newLi.classList.add("folder-list-item");
-        newLi.innerHTML = `
+        if(data.folder){
+            errorText.innerText = "";
+            const newLi = document.createElement("li");
+            newLi.classList.add("folder-list-item");
+            newLi.innerHTML = `
             <h3 class="folder-list-item-title" data-folder-id="${data.folder.id}">${data.folder.folderName}</h3>
             <button class="delete-folder-btn" data-folder-id="${data.folder.id}">Delete</button>
             <button class="edit-folder-btn" data-folder-id="${data.folder.id}">Edit</button>
         `;
-        folderList.appendChild(newLi);
-        folderForm.style.display = "none";
-        folderForm.querySelector("#folderName").value = "";
+            folderList.appendChild(newLi);
+            folderForm.style.display = "none";
+            folderForm.querySelector("#folderName").value = "";
+        }
+        if(data.message){
+            errorText.innerText = "";
+            errorText.innerText = data.message;
+        }
+
     } else {
         response = await fetch(folderForm.action, {
             method: "PUT",
@@ -143,14 +188,21 @@ folderForm.addEventListener("submit", async (e)=>{
             })
         })
         data = await response.json();
-        if(Number(activeFolder.folderId) === data.folder.id){
-            activeFolder.folderName = data.folder.folderName;
-            chooseActiveFolder(data.folder.folderName, data.folder.id);
+        if(data.folder){
+            errorText.innerText = "";
+            if(Number(activeFolder.folderId) === data.folder.id){
+                activeFolder.folderName = data.folder.folderName;
+                chooseActiveFolder(data.folder.folderName, data.folder.id);
+            }
+            const liTitle = folderList.querySelector(`.folder-list-item-title[data-folder-id="${data.folder.id}"]`);
+            if(liTitle) liTitle.innerText = data.folder.folderName;
+            folderForm.style.display = "none";
+            folderForm.querySelector("#folderName").value = "";
         }
-        const liTitle = folderList.querySelector(`.folder-list-item-title[data-folder-id="${data.folder.id}"]`);
-        if(liTitle) liTitle.innerText = data.folder.folderName;
-        folderForm.style.display = "none";
-        folderForm.querySelector("#folderName").value = "";
+        if(data.message){
+            errorText.innerText = "";
+            errorText.innerText = data.message;
+        }
     }
 })
 
