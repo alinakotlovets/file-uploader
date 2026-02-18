@@ -11,10 +11,13 @@ let activeFolder = null;
 
 function chooseActiveFolder(folderName, folderId, files = []){
     const creatFileBox = document.createElement("div");
+    creatFileBox.classList.add("add-file-box")
     const createFileText = document.createElement("h3");
     const fileList = document.createElement("ul");
+    fileList.classList.add("file-list-box")
     createFileText.innerText = `Add file to ${folderName} folder`
     const link = document.createElement("a");
+    link.classList.add("add-file-btn")
     creatFileBox.append(createFileText, link);
 
     link.innerHTML = "+";
@@ -22,18 +25,21 @@ function chooseActiveFolder(folderName, folderId, files = []){
 
 
     pageContent.innerHTML = "";
-    pageContentTitle.innerText = `You now in ${folderName}`
+    pageContentTitle.innerText = `You now in ${folderName}:`
+    pageContentTitle.classList.add("right-box-title");
     pageContent.append(creatFileBox, pageContentTitle);
     if(files.length === 0){
         pageContentTitle.innerText = `Folder ${folderName} empty. Add files to see them.`
     } else {
         files.forEach((file)=>{
             const fileListItem = document.createElement("li");
+            fileListItem.classList.add("file-list-item")
             const fileTitle = document.createElement("a");
             fileTitle.href = `/files/${file.id}/download`
             const detailLink = document.createElement("a");
             detailLink.href = `/files/${file.id}`;
             detailLink.innerText = "Detail";
+            detailLink.classList.add("detail-btn")
             fileTitle.innerText = `${file.fileName}`;
             fileListItem.append(fileTitle, detailLink);
             fileList.append(fileListItem);
@@ -92,7 +98,7 @@ if(folderList){
         const data = await response.json();
 
         if(response.ok){
-            if(activeFolder.folderId === folderId){
+            if(activeFolder && activeFolder.folderId === folderId){
                 noActiveFolder();
             }
             deleteBtn.closest(".folder-list-item").remove();
@@ -166,9 +172,18 @@ folderForm.addEventListener("submit", async (e)=>{
             const newLi = document.createElement("li");
             newLi.classList.add("folder-list-item");
             newLi.innerHTML = `
-            <h3 class="folder-list-item-title" data-folder-id="${data.folder.id}">${data.folder.folderName}</h3>
-            <button class="delete-folder-btn" data-folder-id="${data.folder.id}">Delete</button>
-            <button class="edit-folder-btn" data-folder-id="${data.folder.id}">Edit</button>
+                    <h3 class="folder-list-item-title" data-folder-id="${data.folder.id}">${data.folder.folderName}</h3>
+                    <div class="folder-list-item-btn-box">
+                    <button class="delete-folder-btn red-btn" data-folder-id="${data.folder.id}">
+                        <img src="/images/delete.svg" alt="delete icon" width="15" height="15">
+                    </button>
+                    <button class="edit-folder-btn" data-folder-id="${data.folder.id}">
+                        <img src="/images/edit.svg" alt="edit icon"  width="15" height="15">
+                    </button>
+                    <button class="share-folder-btn blue-btn" data-folder-id="${data.folder.id}">
+                        <img src="/images/share.svg" alt="share icon" width="15" height="15">
+                    </button>
+                    </div>
         `;
             folderList.appendChild(newLi);
             folderForm.style.display = "none";
@@ -190,7 +205,7 @@ folderForm.addEventListener("submit", async (e)=>{
         data = await response.json();
         if(data.folder){
             errorText.innerText = "";
-            if(Number(activeFolder.folderId) === data.folder.id){
+            if(activeFolder && Number(activeFolder.folderId) === data.folder.id){
                 activeFolder.folderName = data.folder.folderName;
                 chooseActiveFolder(data.folder.folderName, data.folder.id);
             }

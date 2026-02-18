@@ -87,22 +87,18 @@ export async function postShareLink(req, res){
 export async function getSharePage(req, res){
     const {token} = req.params;
     if(!token){
-        return res.status(404).json({
-            message: "Share link not found"
-        })
+       return  res.render("sharedFolder", {folderName: null, files: null, token: null, message:  "Share link not found"})
     }
 
     const share= await  getShareByToken(token);
     const date = new Date();
 
     if(share.expiresAt < date){
-        return res.status(403).json({
-            message: "Share link is expired"
-        })
+       return res.render("sharedFolder", {folderName: null, files: null, token: null, message: "Shared link is expires"})
     }
 
     const folder = await getFolderByFolderId(parseInt(share.folderId))
     const files = await getFilesByFolder(parseInt(share.folderId));
-    res.render("sharedFolder", {folderName: folder.folderName, files: files, token:token})
+    res.render("sharedFolder", {folderName: folder.folderName, files: files, token:token, message: ""})
 
 }

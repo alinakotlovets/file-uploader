@@ -4,12 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>File Detail</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<h2>Name: <%= file.fileName %></h2>
-<h2>Size: <%= file.size %></h2>
-<h2>Added at: <%= file.formattedDate%></h2>
-<h2>Added by: <%= file.user.username %></h2>
-<h2>Folder name: <%= file.folder.folderName %></h2>
+<%- include("components/navbar.ejs")%>
+<div class="container">
+    <div class="file-detail-box">
+        <div class="file-detail-text-box">
+            <h3 class="text-grey">Name: </h3>
+            <h3><%= file.fileName %></h3>
+        </div>
+        <div class="file-detail-text-box">
+            <h3 class="text-grey">Size:</h3>
+            <h3> <%= file.size %></h3>
+        </div>
+        <div class="file-detail-text-box">
+            <h3 class="text-grey">Added at:</h3>
+            <h3> <%= file.formattedDate%></h3>
+        </div>
+        <div class="file-detail-text-box">
+            <h3 class="text-grey">Added by:</h3>
+            <h3> <%= file.user.username %></h3>
+        </div>
+        <div class="file-detail-text-box">
+            <h3 class="text-grey">Folder name:</h3>
+            <h3> <%= file.folder.folderName %></h3>
+        </div>
+    </div>
+</div>
 </body>
 </html>

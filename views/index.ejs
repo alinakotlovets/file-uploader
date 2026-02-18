@@ -7,24 +7,40 @@
     <title>File Uploader</title>
 </head>
 <body>
-<a href="/log-out">Log out</a>
-<h1>Hello <%=user.username%></h1>
-<div>
-<button id="add-folder-btn">Add Folder</button>
-    <ul class="folder-list">
-        <% if(folders.length > 0 ){ %>
-        <% folders.forEach((folder)=>{ %>
-            <li class="folder-list-item">
-                <h3 class="folder-list-item-title" data-folder-id="<%= folder.id %>"><%= folder.folderName %></h3>
-                <button class="delete-folder-btn" data-folder-id="<%= folder.id %>">Delete</button>
-                <button class="edit-folder-btn" data-folder-id="<%= folder.id %>"> Edit </button>
-                <button class="share-folder-btn" data-folder-id="<%= folder.id %>">Share</button>
-            </li>
+<%- include("components/navbar.ejs")%>
+<div class="container">
+    <div class="content-box">
+    <div class="left-content-box">
+        <div class="add-folder-box">
+            <h3>Add folder: </h3>
+            <button class="add-folder-btn" id="add-folder-btn">
+                <img src="/images/add-folder.svg" alt="add folder icon" width="15" height="15">
+            </button>
+        </div>
+        <ul class="folder-list">
+            <% if(folders.length > 0 ){ %>
+            <% folders.forEach((folder)=>{ %>
+                <li class="folder-list-item">
+                    <h3 class="folder-list-item-title" data-folder-id="<%= folder.id %>"><%= folder.folderName %></h3>
+                    <div class="folder-list-item-btn-box">
+                    <button class="delete-folder-btn red-btn" data-folder-id="<%= folder.id %>">
+                        <img src="/images/delete.svg" alt="delete icon" width="15" height="15">
+                    </button>
+                    <button class="edit-folder-btn" data-folder-id="<%= folder.id %>">
+                        <img src="/images/edit.svg" alt="edit icon"  width="15" height="15">
+                    </button>
+                    <button class="share-folder-btn blue-btn" data-folder-id="<%= folder.id %>">
+                        <img src="/images/share.svg" alt="share icon" width="15" height="15">
+                    </button>
+                    </div>
+                </li>
         <% }) %>
-<% } %>
-    </ul>
+        <% } %>
+        </ul>
+    </div>
+    <div class="right-content-box" id="page-content"></div>
+    <%- include("components/folderForm.ejs")%>
+    </div>
 </div>
-<div id="page-content"></div>
-<%- include("components/folderForm.ejs")%>
 </body>
 </html>

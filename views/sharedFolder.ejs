@@ -7,6 +7,9 @@
     <title>Shared folder</title>
 </head>
 <body>
+<%- include("components/navbar.ejs")%>
+<div class="container">
+    <% if(folderName){%>
 <div>
    <h3> Folder name: <%= folderName %></h3>
     <ul class="files-list">
@@ -14,11 +17,18 @@
             <% files.forEach((file)=>{ %>
                 <li class="file-list-item">
                     <a href="/files/share/<%= token %>/<%= file.id %>/download"><%= file.fileName %></a>
-                    <a href="/files/share/<%= token %>/<%= file.id %>">Detail</a>
+                    <a class="detail-btn" href="/files/share/<%= token %>/<%= file.id %>">Detail</a>
                 </li>
             <% }) %>
         <% } %>
     </ul>
+</div>
+    <%}%>
+    <% if(message) {%>
+        <div class="message-box">
+            <h3><%= message %></h3>
+        </div>
+    <%}%>
 </div>
 </body>
 </html>

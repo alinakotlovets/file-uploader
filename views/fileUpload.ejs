@@ -2,14 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>File Upload</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<form action="/files/upload-file/<%= folderId %>" method="post" enctype="multipart/form-data">
+<%- include("components/navbar.ejs")%>
+<div class="container">
+    <div class="upload-file-form-box">
+<form class="upload-file-form" action="/files/upload-file/<%= folderId %>" method="post" enctype="multipart/form-data">
     <label for="file">File:</label>
     <input type="file" id="file" name="file">
     <%- include('components/errors.ejs', {errors: errors})%>
     <button type="submit">Submit</button>
 </form>
+    </div>
+</div>
 </body>
 </html>

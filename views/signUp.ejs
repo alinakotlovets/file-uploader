@@ -2,18 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sign Up</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<form action="/sign-up" method="post">
+<div class="container">
+    <div class="registration-form-box">
+<form class="registration-form" action="/sign-up" method="post">
     <label for="username">Username</label>
     <input type="text" id="username" value="<%= username %>" name="username">
     <label for="password">Password:</label>
-    <input type="text" id="password" value="<%= password %>" name="password">
+    <input type="password" id="password" value="<%= password %>" name="password">
     <label for="confirmPassword">Confirm password:</label>
-    <input type="text" id="confirmPassword" value="<%= confirmPassword %>" name="confirmPassword">
+    <input type="password" id="confirmPassword" value="<%= confirmPassword %>" name="confirmPassword">
     <%- include('components/errors.ejs', {errors: errors})%>
+    <div class="flex-center">
     <button type="submit">Submit</button>
+    </div>
 </form>
+<h3> Already have an account yet? <a href="/sign-in" class="link">Sign in</a></h3>
+    </div>
+</div>
 </body>
 </html>

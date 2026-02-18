@@ -1,0 +1,15 @@
+<nav>
+    <% if(user) { %>
+    <h3>Hello <%=user.username%></h3>
+    <div class="nav-link-list">
+        <a class="nav-text" href="/">Home</a>
+        <a class="nav-text" href="/log-out">Log out</a>
+    </div>
+    <%} else {%>
+    <h3>File Uploader</h3>
+    <div class="nav-link-list">
+        <a class="nav-text" href="/sign-in">Sign in</a>
+        <a class="nav-text" href="/sign-up">Sign up</a>
+    </div>
+    <%}%>
+</nav>
